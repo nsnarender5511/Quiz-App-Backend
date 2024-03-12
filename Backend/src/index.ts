@@ -3,6 +3,8 @@ import { Server } from 'socket.io';
 import { IoManager } from './managers/IoManager';
 import { UserManager } from './managers/userManager';
 
+let globalRoomId = 0;
+
 
 const io = IoManager.getIo();
 
@@ -18,6 +20,9 @@ console.log("Application started");
 
 io.on('connection', (socket) => {
   console.log("coonection Establisted !!!");
-  userManager.addUser("123", socket);
-  io.emit('connection', {roomId: 123});
+
+  const roomId = "room#" + globalRoomId++;
+
+  userManager.addUser(roomId, socket);
+  io.emit('connection', {roomId: roomId});
 });

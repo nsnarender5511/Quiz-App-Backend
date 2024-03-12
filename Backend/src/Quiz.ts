@@ -90,6 +90,7 @@ export class Quiz{
 
     addProblem(problem: Problem){
         this.problems.push(problem);
+        console.log("## Problems " + this.problems);
     }
 
     addUser(name: string){

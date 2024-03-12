@@ -13,6 +13,7 @@ class UserManager {
         this.createhandlers(roomId, socket);
     }
     createhandlers(roomId, socket) {
+        //when client first Joins
         socket.on("join", (data) => {
             const userId = this.quizManager.addUser(data.roomId, data.name);
             socket.emit("userId", {
@@ -32,15 +33,27 @@ class UserManager {
         });
         ///For Admin 
         socket.on("join_admin", (data) => {
+            console.log("client Has Joined as Admin");
             if (data.password != ADMIN_PASSWORD) {
                 return;
             }
             const userId = this.quizManager.addUser(data.roomId, data.name);
-            socket.emit("adminInit", {
+            socket.emit("admin_Init", {
                 userId,
                 state: this.quizManager.getCurrentState(roomId),
             });
-            socket.on("createProblem", data => {
+            socket.on("create_Quiz", data => {
+                console.log("Admin created a new Quiz !!");
+                this.quizManager.addQuiz(data.roomId);
+                console.log("Quiz Created " + data.roomId);
+            });
+            socket.on("create_Problem", data => {
+                console.log("new Problem  -  " + data.roomId);
+                console.log("Problem created in room", data.roomId);
+                console.log("Title:", data.problem.title);
+                console.log("Description:", data.problem.desc);
+                console.log("Options:", data.problem.options);
+                console.log("Correct Answer:", data.problem.answer);
                 const roomId = data.roomId;
                 this.quizManager.addProblem(data.roomId, data.problem);
             });

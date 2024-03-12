@@ -10,6 +10,11 @@ export class QuizManager{
     }
 
     addUser(roomId: string, name: string){
+        // const quiz = this.getQuiz(roomId);
+        // if(quiz) quiz.addUser(name);
+
+
+        //Optional Chaining
         this.getQuiz(roomId)?.addUser(name);
     }
 
@@ -26,19 +31,19 @@ export class QuizManager{
       
         return this.quizes.find(x => x.roomId === roomId) ?? null;
       }
+
       
 
     public start(roomId: string){
         const io = IoManager.getIo();
-        const quiz = this.getQuiz(roomId);
-        if(quiz) quiz.start();
+        this.getQuiz(roomId)?.start();
+        //if(quiz) quiz.start();
         
     }
 
     public addProblem(roomId: string, problem: {
                     title: string;
                     desc: string;
-                    image: string;
                     options : {
                         id: number;
                         title: string;
@@ -51,7 +56,8 @@ export class QuizManager{
                     ...problem, 
                     id: (globalProblemId++).toString(),
                     startTime: new Date().getTime(),
-                    submissions: []
+                    submissions: [],
+                    image : ""
                 });
 
 
@@ -73,6 +79,11 @@ export class QuizManager{
     public next(roomId: string){
         const quiz = this.getQuiz(roomId);
         quiz?.next();
+    }
+
+    public addQuiz(roomId: string){
+        const quiz = new Quiz(roomId);
+        this.quizes.push(quiz);
     }
 
 

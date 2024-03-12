@@ -47,6 +47,7 @@ class Quiz {
     }
     addProblem(problem) {
         this.problems.push(problem);
+        console.log("## Problems " + this.problems);
     }
     addUser(name) {
         const id = this.randomString();
