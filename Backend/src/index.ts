@@ -9,9 +9,8 @@ let globalRoomId = 0;
 const io = IoManager.getIo();
 
 const userManager = new UserManager();
-io.listen(3000);
 
-console.log("Application started");
+
 
 
 // io.on('connection', (socket) => {
@@ -19,10 +18,14 @@ console.log("Application started");
 // });
 
 io.on('connection', (socket) => {
-  console.log("coonection Establisted !!!");
+  console.log("coonection Establisted !!!   ", globalRoomId);
 
   const roomId = "room#" + globalRoomId++;
 
   userManager.addUser(roomId, socket);
   io.emit('connection', {roomId: roomId});
 });
+
+io.listen(8080);
+console.log("Application started Listening on port 8080");
+

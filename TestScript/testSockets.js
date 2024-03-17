@@ -1,7 +1,7 @@
 const io = require('socket.io-client');
 
 // Replace 'http://your-socket-server-url' with the actual URL of your Socket.IO server
-const socket = io('http://localhost:3000');
+const socket = io('http://localhost:8080');
 
 console.log("Client Running");
 
@@ -27,9 +27,7 @@ socket.on('connection', (data) => {
     roomId : roomId
   });
 
-  socket.emit("create_Quiz", {
-    roomId : roomId
-  });
+
 
   socket.emit("create_Problem", {
     roomId: roomId,

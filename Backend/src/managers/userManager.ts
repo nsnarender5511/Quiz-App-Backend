@@ -52,22 +52,26 @@ export class UserManager {
 
         socket.on("join_admin", (data) => {
             
-            console.log("client Has Joined as Admin");
 
-            if(data.password != ADMIN_PASSWORD){
+            if(data!= ADMIN_PASSWORD){
+                socket.emit("admin_Init_failed", {"Worng PassWord !!":String});
                 return;
             }
+            console.log("client Has Joined as Admin");
+
 
             const userId = this.quizManager.addUser(data.roomId, data.name);
             socket.emit("admin_Init", {
                 userId,
                 state: this.quizManager.getCurrentState(roomId),
+                roomId: roomId,
             });
 
             socket.on("create_Quiz", data=> {
                 console.log("Admin created a new Quiz !!");
                 this.quizManager.addQuiz(data.roomId); 
-                console.log("Quiz Created " + data.roomId);                                                              
+                console.log("Quiz Created " + data.roomId);
+                socket.emit("quiz_created", {roomId: data.roomId});                                                              
             });
 
             socket.on("create_Problem", data => {
@@ -86,6 +90,8 @@ export class UserManager {
                 this.quizManager.next(roomId);
             })
         });
+
+        
     }
 
 

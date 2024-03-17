@@ -12,6 +12,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@elastic/elasticsearch": "^8.12.2",
+    "cors": "^2.8.5",
     "http": "^0.0.1-security",
     "i": "^0.3.7",
     "socket.io": "^4.7.4",
