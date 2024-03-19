@@ -88,7 +88,8 @@ socket.emit("create_Problem", {
       { id: 3, title: "5" },
       { id: 4, title: "6" }
     ],
-    answer: 3 // 5 is the correct answer
+    answer: 3, // 5 is the correct answer,
+    isLastProblem: true
   }
 });
 

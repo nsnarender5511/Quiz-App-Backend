@@ -1,5 +1,6 @@
 import { Socket } from "socket.io";
 import { QuizManager } from "./QuizManager";
+import { ElasticSingleton } from "../DAO/ElasticSingleton";
 
 const ADMIN_PASSWORD = "pass";
 
@@ -50,7 +51,7 @@ export class UserManager {
 
         ///For Admin 
 
-        socket.on("join_admin", (data) => {
+        socket.on("join_admin", async (data) => {
             
 
             if(data!= ADMIN_PASSWORD){
@@ -65,7 +66,7 @@ export class UserManager {
                 userId,
                 state: this.quizManager.getCurrentState(roomId),
                 roomId: roomId,
-                quizes: this.quizManager.getAllQuizes(),
+                quizes: await this.quizManager.getAllQuizes(),
 
             });
 
@@ -90,7 +91,15 @@ export class UserManager {
                 if(data.problem.islastPrblem){
                     console.log("Last Problem Created");
                     //to persist data here
+                    console.log("Persisting Data to Elastic Search");
+                    ElasticSingleton.getClient().index({
+                        index : "quiz",
+                        body: {
+                            userId: "Admin",
+                            Quiz: this.quizManager.getQuiz(roomId),
 
+                        }
+                    });
 
                     socket.emit("Last_Problem_Created", {userId,
                         state: this.quizManager.getCurrentState(roomId),

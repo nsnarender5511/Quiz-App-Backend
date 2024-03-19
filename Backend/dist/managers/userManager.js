@@ -1,7 +1,17 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserManager = void 0;
 const QuizManager_1 = require("./QuizManager");
+const ElasticSingleton_1 = require("../DAO/ElasticSingleton");
 const ADMIN_PASSWORD = "pass";
 class UserManager {
     constructor() {
@@ -32,7 +42,7 @@ class UserManager {
             this.quizManager.submit(userId, roomId, problemId, submission);
         });
         ///For Admin 
-        socket.on("join_admin", (data) => {
+        socket.on("join_admin", (data) => __awaiter(this, void 0, void 0, function* () {
             if (data != ADMIN_PASSWORD) {
                 socket.emit("admin_Init_failed", { "Worng PassWord !!": String });
                 return;
@@ -43,7 +53,7 @@ class UserManager {
                 userId,
                 state: this.quizManager.getCurrentState(roomId),
                 roomId: roomId,
-                quizes: this.quizManager.getAllQuizes(),
+                quizes: yield this.quizManager.getAllQuizes(),
             });
             socket.on("create_Quiz", data => {
                 console.log("Admin created a new Quiz !!");
@@ -63,6 +73,14 @@ class UserManager {
                 if (data.problem.islastPrblem) {
                     console.log("Last Problem Created");
                     //to persist data here
+                    console.log("Persisting Data to Elastic Search");
+                    ElasticSingleton_1.ElasticSingleton.getClient().index({
+                        index: "quiz",
+                        body: {
+                            userId: "Admin",
+                            Quiz: this.quizManager.getQuiz(roomId),
+                        }
+                    });
                     socket.emit("Last_Problem_Created", { userId,
                         state: this.quizManager.getCurrentState(roomId),
                         roomId: roomId,
@@ -78,7 +96,7 @@ class UserManager {
                 const roomId = data.roomId;
                 this.quizManager.next(roomId);
             });
-        });
+        }));
     }
 }
 exports.UserManager = UserManager;

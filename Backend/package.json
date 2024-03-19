@@ -14,8 +14,11 @@
   "dependencies": {
     "@elastic/elasticsearch": "^8.12.2",
     "cors": "^2.8.5",
+    "es8": "npm:@elastic/elasticsearch@^8.12.2",
     "http": "^0.0.1-security",
     "i": "^0.3.7",
+    "install": "^0.13.0",
+    "npm": "^10.5.0",
     "socket.io": "^4.7.4",
     "typescript": "^5.3.3"
   }

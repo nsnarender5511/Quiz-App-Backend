@@ -17,11 +17,11 @@ const AdminPage: React.FC<AdminPageProps> = ({ handleAdminLogin }) => {
   const [quizes, setQuizes] = React.useState<any[]>([]);
   const socket = SocketSigleTon();
 
-  console.log("Quizes after setting - ", quizes);
+  //console.log("Quizes after setting - ", quizes);
 
   useEffect(() => {
     socket.on("admin_Init", (data) => {
-      console.log("Allquizes  ", data.quizes);
+      console.log("Allquizes  ", data);
 
       //console.log("Admin Init - ", data);
       handleAdminLogin();

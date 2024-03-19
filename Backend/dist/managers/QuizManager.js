@@ -1,6 +1,16 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.QuizManager = void 0;
+const ElasticSingleton_1 = require("../DAO/ElasticSingleton");
 const Quiz_1 = require("../Quiz");
 const IoManager_1 = require("./IoManager");
 let globalProblemId = 0;
@@ -56,7 +66,26 @@ class QuizManager {
         this.quizes.push(quiz);
     }
     getAllQuizes() {
-        return this.quizes;
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                let quizList = yield ElasticSingleton_1.ElasticSingleton.getClient().search({
+                    index: "quiz",
+                    body: {
+                        query: {
+                            match: {
+                                userId: "Admin"
+                            }
+                        }
+                    }
+                });
+                let quizzes = quizList.hits.hits.map(hit => hit._source.Quiz);
+                return quizzes;
+            }
+            catch (error) {
+                console.error("Error fetching quizzes:", error);
+                return []; // Return an empty array or handle the error according to your application's logic
+            }
+        });
     }
 }
 exports.QuizManager = QuizManager;

@@ -1,4 +1,5 @@
- import { Quiz } from "../Quiz";
+ import { ElasticSingleton } from "../DAO/ElasticSingleton";
+import { Quiz } from "../Quiz";
 import { IoManager } from "./IoManager";
 let globalProblemId = 0;
 
@@ -76,6 +77,8 @@ export class QuizManager{
         return quiz.getCurrentState();
     }
 
+
+
     public next(roomId: string){
         const quiz = this.getQuiz(roomId);
         quiz?.next();
@@ -86,8 +89,26 @@ export class QuizManager{
         this.quizes.push(quiz);
     }
 
-    public getAllQuizes(){
-        return this.quizes;
+    public async getAllQuizes() {
+        try {
+            let quizList = await ElasticSingleton.getClient().search({
+                index: "quiz",
+                body: {
+                    query: {
+                        match: {
+                            userId: "Admin"
+                        }
+                    }
+                }
+            });
+    
+            let quizzes = quizList.hits.hits.map(hit => (hit._source as any).Quiz);
+
+            return quizzes;
+        } catch (error) {
+            console.error("Error fetching quizzes:", error);
+            return []; // Return an empty array or handle the error according to your application's logic
+        }
     }
 
 
