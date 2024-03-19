@@ -86,5 +86,9 @@ export class QuizManager{
         this.quizes.push(quiz);
     }
 
+    public getAllQuizes(){
+        return this.quizes;
+    }
+
 
 }

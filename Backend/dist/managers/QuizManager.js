@@ -55,6 +55,9 @@ class QuizManager {
         const quiz = new Quiz_1.Quiz(roomId);
         this.quizes.push(quiz);
     }
+    getAllQuizes() {
+        return this.quizes;
+    }
 }
 exports.QuizManager = QuizManager;
 //# sourceMappingURL=QuizManager.js.map

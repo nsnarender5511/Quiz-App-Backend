@@ -65,6 +65,8 @@ export class UserManager {
                 userId,
                 state: this.quizManager.getCurrentState(roomId),
                 roomId: roomId,
+                quizes: this.quizManager.getAllQuizes(),
+
             });
 
             socket.on("create_Quiz", data=> {
@@ -84,6 +86,23 @@ export class UserManager {
 
                 const roomId = data.roomId;
                 this.quizManager.addProblem(data.roomId, data.problem);
+
+                if(data.problem.islastPrblem){
+                    console.log("Last Problem Created");
+                    //to persist data here
+
+
+                    socket.emit("Last_Problem_Created", {userId,
+                        state: this.quizManager.getCurrentState(roomId),
+                        roomId: roomId,
+                        quizes: this.quizManager.getAllQuizes(),
+                });
+                }else{
+                    console.log("Next Problem Created");
+                    socket.emit("Problem_Created", data);
+                
+                }
+
             })
             socket.on("next", data => {
                 const roomId = data.roomId;
